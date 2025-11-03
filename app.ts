@@ -5,7 +5,7 @@ import Homey from 'homey';
 const { OAuth2App } = require('homey-oauth2app');
 const MyBrandOAuth2Client = require('./lib/MyBrandOAuth2Client');
 const path = require('path');
-const GoogleAssistant = require('google-assistant');
+//const GoogleAssistant = require('./googleassistant');
 
 
 var CLIENT_ID = "";

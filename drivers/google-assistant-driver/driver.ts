@@ -3,9 +3,9 @@ import { json } from 'stream/consumers';
 
 const { OAuth2Driver } = require('homey-oauth2app');
 const path = require('path');
-const GoogleAssistant = require('google-assistant');
+const GoogleAssistant = require('./../../googleassistant');
+const {google} = require('googleapis');
 
-const mkdirp = require('mkdirp');
 const fs = require('fs');
 
 const SAVED_TOKENS_PATH = path.resolve(__dirname, './../../lib/tokens.json');
@@ -26,6 +26,7 @@ module.exports = class MyBrandDriver extends OAuth2Driver {
     const CLIENT_ID = settings.get('clientid');
 		const CLIENT_SECRET = settings.get('clientsecret');
 		const TOKEN = settings.get('token');
+    const {mkdirp} = require('mkdirp');
 
 
     const SCOPES = [ 'https://www.googleapis.com/auth/userinfo.profile','https://www.googleapis.com/auth/userinfo.email' ];
@@ -52,7 +53,16 @@ module.exports = class MyBrandDriver extends OAuth2Driver {
       });
 
     //TEST QUERY
-    this.sendQuery(oAuth2Client, "Play Graceland on Spotify", true);
+    const oAuth2ClientGoogle = new google.auth.OAuth2(
+      CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
+      oAuth2ClientGoogle.setCredentials(JSON.parse(JSON.stringify(oAuth2Client._token)));
+
+      console.log(oAuth2ClientGoogle);
+
+      this.sendQuery(oAuth2ClientGoogle, "Play Graceland on Spotify", true);
+
+  
+    
     
 
 //    let data = await oAuth2Client.getThings(params);
@@ -60,7 +70,7 @@ module.exports = class MyBrandDriver extends OAuth2Driver {
 
     var devices: object[] = [];
     for (let i=0; i<1; i++){
-      var newDevice = { data: { id: "google-assistant-driver"}, name: "Google Assistant Driver", settings: { token: "token", oauth: oAuth2Client }}
+      var newDevice = { data: { id: "google-assistant-driver"}, name: "Google Assistant Driver", settings: { token: "token", oauth: oAuth2ClientGoogle }}
       devices.push(newDevice);
     }
     return devices;

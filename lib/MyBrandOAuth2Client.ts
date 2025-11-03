@@ -25,6 +25,9 @@ module.exports = class MyBrandOAuth2Client extends OAuth2Client {
       query: { code },
     });
   }
+  async getRequestHeaders() {
+    return "hallo";
+  }
 
   async updateThing({ id, code }) {
     return this.put({

@@ -12,15 +12,16 @@
     "typescript": "^5.4.4"
   },
   "dependencies": {
+    "@grpc/grpc-js": "^1.10.6",
     "audit": "^0.0.6",
     "fix": "^0.0.3",
-    "google-assistant": "^0.7.0",
+    "google-auth-library": "^9.8.0",
+    "googleapis": "^134.0.0",
     "homey-oauth2app": "^3.5.7",
+    "mkdirp": "^3.0.1",
     "npm": "^10.5.2",
-    "update": "^0.4.2"
-  },
-  "overrides": {
-    "google-auth-library": "9.8.0",
-    "@grpc/grpc-js": "1.10.6"
+    "open": "^10.1.0",
+    "readline": "^1.3.0",
+    "update": "^0.7.4"
   }
 }
