@@ -1,0 +1,10 @@
+{
+  "type": "string",
+  "title": {
+    "en": "Last Response",
+    "nl": "Laatste Antwoord"
+  },
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor"
+}

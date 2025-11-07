@@ -16,27 +16,35 @@
       <p class="homey-subtitle" data-i18n="settings.subtitle">
         <!-- This field will also be translated -->
       </p>
+      <p><strong>Setup Instructions:</strong></p>
+      <ol>
+        <li>Go to <a href="https://console.cloud.google.com/apis/credentials/" target="_blank">Google Cloud Console - Credentials</a></li>
+        <li>Create OAuth 2.0 credentials (or use existing)</li>
+        <li>Enable the <strong>Google Assistant API</strong> in your project: <a href="https://console.cloud.google.com/apis/library/embeddedassistant.googleapis.com" target="_blank">Enable API</a></li>
+        <li>Copy your Client ID and Client Secret below</li>
+        <li>Click "Get Token" to authorize</li>
+      </ol>
     </header>
 
     <fieldset class="homey-form-fieldset">
-      <legend class="homey-form-legend">Google Assistant Client ID</legend>
+      <legend class="homey-form-legend">Google OAuth2 Configuration</legend>
 
       <div class="homey-form-group">
         <label class="homey-form-label" for="clientid">Client ID</label>
-        <input class="homey-form-input" id="clientid" type="text" value="" />
+        <input class="homey-form-input" id="clientid" type="text" value="" placeholder="Your Google OAuth2 Client ID" />
 
         <label class="homey-form-label" for="clientsecret">Client Secret</label>
-        <input class="homey-form-input" id="clientsecret" type="text" value="" />
-		
-        <label class="homey-form-label" for="token">Access Token</label>
-        <input class="homey-form-input" id="token" type="text" value="" />
-		
-		<button id="btn-gettoken" class="homey-button-primary-full">Get token</button>
+        <input class="homey-form-input" id="clientsecret" type="text" value="" placeholder="Your Google OAuth2 Client Secret" />
       </div>
     
     </fieldset>
 
     <button id="save" class="homey-button-primary-full">Save changes</button>
+    
+    <p style="margin-top: 20px; color: #666;">
+      <strong>Note:</strong> After saving, add the Google Assistant device through the Devices page. 
+      The OAuth2 authorization will happen during the pairing process.
+    </p>
 
     <script type="text/javascript">
       // a method named 'onHomeyReady' must be present in your code
@@ -46,10 +54,7 @@
 
         var clientidElement = document.getElementById("clientid");
         var clientsecretElement = document.getElementById("clientsecret");
-		var tokenElement = document.getElementById("token");
-
         var saveElement = document.getElementById("save");
-		 var gettokenElement = document.getElementById("btn-gettoken");
 
         Homey.get("clientid", function (err, clientid) {
           if (err) return Homey.alert(err);
@@ -60,15 +65,6 @@
           if (err) return Homey.alert(err);
           clientsecretElement.value = clientsecret;
         });
-		
-        Homey.get("token", function (err, token) {
-          if (err) return Homey.alert(err);
-          tokenElement.value = token;
-        });
-		
-		
-
-  
 
         saveElement.addEventListener("click", function (e) {
           Homey.set("clientid", clientidElement.value, function (err) {
@@ -76,50 +72,10 @@
           });
           Homey.set("clientsecret", clientsecretElement.value, function (err) {
             if (err) return Homey.alert(err);
+            Homey.alert('Settings saved! Now add a Google Assistant device through the Devices page.');
           });
-          Homey.set("token", tokenElement.value, function (err) {
-            if (err) return Homey.alert(err);
-          });
-        
         });
-		
-		gettokenElement.addEventListener("click",getToken);
-		
-	  	  function getToken() {
-	  	    	const settings = this.getSettings();
-				const API_URL = "https://accounts.google.com/o/oauth2/auth?response_type=token";
-				const CALLBACK_URL = "https://callback.athom.com/oauth2/callback";
-				const SCOPE = "https://www.googleapis.com/auth/cloud-platform.read-only";
-
-
-				//https://accounts.google.com/o/oauth2/auth?response_type=token&scope=https://www.googleapis.com/auth/cloud-platform.read-only&client_id=361248910627-sbt2ehglhgptp0ksjqfgk1cv32f1162l.apps.googleusercontent.com&redirect_uri=https://callback.athom.com/oauth2/callback
-				
-	  		  	const CLIENT_ID = settings.clientid; //this.homey.settings.get('clientid');//Homey.env.CLIENT_ID;
-			
-	
-	  		  	const OAUTH_URL = `${API_URL}&client_id=${CLIENT_ID}&redirect_uri=${CALLBACK_URL}&scope=${SCOPE}`;
-	  		  	console.log(OAUTH_URL);
-	
-  
-	  		     /* const myOAuth2Callback = await this.homey.cloud.createOAuth2Callback(OAUTH_URL);
-
-	  		      myOAuth2Callback
-	  		        .on("url", (url) => {
-	  		          // dend the URL to the front-end to open a popup
-	  		          session.emit("url", url);
-	  		        })
-	  		        .on("token", (token) => {
-	  		          // ... swap your code here for an access token
-
-	  		          // tell the front-end we're done
-	  		          session.emit("authorized");
-	  		        });*/
-	  	  }
-		
       }
-	  
-	  
-	  
     </script>
   </body>
 </html>

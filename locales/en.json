@@ -1,6 +1,6 @@
 {
   "settings": {
     "title": "Google Assistant Query Settings",
-    "subtitle": "Don't forget to create a Google Assistant Driver device AND visit https://console.cloud.google.com/apis/credentials/"
+    "subtitle": "Don't forget to create a Google Assistant Driver device AND visit "
   }
 }

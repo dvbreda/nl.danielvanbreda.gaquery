@@ -3,7 +3,37 @@
     "en": "Google Assistant Driver"
   },
   "class": "other",
-  "capabilities": [],
+  "capabilities": [
+    "last_query",
+    "last_response",
+    "last_device_action"
+  ],
+  "capabilitiesOptions": {
+    "last_query": {
+      "title": {
+        "en": "Last Query",
+        "nl": "Laatste Vraag"
+      },
+      "getable": true,
+      "setable": false
+    },
+    "last_response": {
+      "title": {
+        "en": "Last Response",
+        "nl": "Laatste Antwoord"
+      },
+      "getable": true,
+      "setable": false
+    },
+    "last_device_action": {
+      "title": {
+        "en": "Last Device Action",
+        "nl": "Laatste Apparaat Actie"
+      },
+      "getable": true,
+      "setable": false
+    }
+  },
   "platforms": [
     "local"
   ],

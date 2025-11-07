@@ -10,7 +10,6 @@ const path = require('path');
 
 var CLIENT_ID = "";
 var CLIENT_SECRET = "";
-var TOKEN = "";
 
 module.exports = class MyBrandApp extends OAuth2App {
 
@@ -25,18 +24,101 @@ module.exports = class MyBrandApp extends OAuth2App {
     const settings = this.homey.settings;
 		CLIENT_ID = settings.get('clientid');
 		CLIENT_SECRET = settings.get('clientsecret');
-		TOKEN = settings.get('token');
 		
-		if (CLIENT_ID == "" || CLIENT_SECRET == "") {
-			this.log("Error: Please enter your CLIENT ID and SECRET in settings");
-			return;
+		this.log('=== App Settings ===');
+		this.log('CLIENT_ID:', CLIENT_ID || '(empty)');
+		this.log('CLIENT_SECRET:', CLIENT_SECRET ? '(present)' : '(empty)');
+		
+		if (CLIENT_ID == "" || CLIENT_SECRET == "" || !CLIENT_ID || !CLIENT_SECRET) {
+			this.log("Warning: Please enter your CLIENT ID and SECRET in settings");
+			// Don't return - continue to register flow cards
 		} 
 
     this.log("Google Assistant Query is running");
-       /* this.foundDevices = [];
-
-        this.discoverDevices();*/
-        //this.goWithTheFlow();
+    
+    // Register flow cards
+    this.registerFlowCards();
+  }
+  
+  async registerFlowCards() {
+    const queryAction = this.homey.flow.getActionCard('query');
+    const stopAction = this.homey.flow.getActionCard('stop');
+    
+    queryAction.registerRunListener(async (args, state) => {
+      this.log('Flow card triggered with query:', args.query, 'new:', args.new);
+      
+      // Get the driver
+      const driver = this.homey.drivers.getDriver('google-assistant-driver');
+      if (!driver) {
+        throw new Error('Google Assistant driver not found');
+      }
+      
+      // Get the first device (there should only be one)
+      const devices = driver.getDevices();
+      if (devices.length === 0) {
+        throw new Error('No Google Assistant device found. Please pair a device first.');
+      }
+      
+      const device = devices[0];
+      
+      // Log device state
+      this.log('Device found:', device.getName());
+      this.log('Google OAuth2 Client:', device.googleOAuth2Client ? 'Present' : 'Missing');
+      
+      // Get the Google OAuth2 Client from the device
+      if (!device.googleOAuth2Client) {
+        this.log('Google OAuth2 Client not initialized, attempting to initialize...');
+        
+        // Try to initialize it now
+        if (typeof device.initializeGoogleClient === 'function') {
+          await device.initializeGoogleClient();
+        }
+        
+        // Check again
+        if (!device.googleOAuth2Client) {
+          this.error('Google OAuth2 Client still not initialized after retry');
+          throw new Error('Google OAuth2 Client not initialized. Make sure you have entered Client ID and Client Secret in settings, then try re-pairing the device.');
+        }
+      }
+      
+      this.log('Sending query to Google Assistant...');
+      
+      // Call sendQuery on the driver and get the response
+      const result = await driver.sendQuery(device.googleOAuth2Client, args.query, args.new);
+      
+      this.log('Query sent successfully, response:', result.response);
+      this.log('Device action:', result.deviceAction || 'None');
+      
+      // Update device capabilities with the results
+      if (typeof device.updateQueryResults === 'function') {
+        await device.updateQueryResults(args.query, result.response, result.deviceAction || '');
+      }
+      
+      // Return tokens for use in flow
+      return {
+        response: result.response,
+        device_action: result.deviceAction || ''
+      };
+    });
+    
+    stopAction.registerRunListener(async (args, state) => {
+      this.log('Stop conversation flow card triggered');
+      
+      // Get the driver
+      const driver = this.homey.drivers.getDriver('google-assistant-driver');
+      if (!driver) {
+        throw new Error('Google Assistant driver not found');
+      }
+      
+      // Stop the conversation
+      driver.stopConversation();
+      
+      this.log('Conversation stopped');
+      
+      return true;
+    });
+    
+    this.log('Flow cards "query" and "stop" registered');
   }
 
   /*async getGaDevice(){

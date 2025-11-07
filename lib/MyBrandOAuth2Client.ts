@@ -7,7 +7,12 @@ module.exports = class MyBrandOAuth2Client extends OAuth2Client {
   static API_URL = 'https://accounts.google.com/o/oauth2/auth?response_type=code&';
   static TOKEN_URL = 'https://oauth2.googleapis.com/token';
   static AUTHORIZATION_URL = 'https://accounts.google.com/o/oauth2/auth';
-  static SCOPES = [ 'https://www.googleapis.com/auth/userinfo.profile','https://www.googleapis.com/auth/userinfo.email' ];
+  static SCOPES = [ 
+    'https://www.googleapis.com/auth/assistant-sdk-prototype',
+    'https://www.googleapis.com/auth/gcm',
+    'https://www.googleapis.com/auth/userinfo.profile',
+    'https://www.googleapis.com/auth/userinfo.email' 
+  ];
 
   // Optional:
   //static TOKEN = MyBrandOAuth2Token; // Default: OAuth2Token

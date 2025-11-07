@@ -1,0 +1,15 @@
+{
+  "title": {
+    "en": "Stop conversation",
+    "nl": "Stop gesprek"
+  },
+  "id": "stop",
+  "hint": {
+    "en": "Stop the current Google Assistant conversation",
+    "nl": "Stop het huidige Google Assistant gesprek"
+  },
+  "titleFormatted": {
+    "en": "Stop Google Assistant conversation",
+    "nl": "Stop Google Assistant gesprek"
+  }
+}

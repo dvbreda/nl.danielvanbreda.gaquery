@@ -29,5 +29,31 @@
 		"nl": "Nieuw gesprek?"
       }
     }
+  ],
+  "tokens": [
+    {
+      "name": "response",
+      "type": "string",
+      "title": {
+        "en": "Response",
+        "nl": "Antwoord"
+      },
+      "example": {
+        "en": "The weather is sunny today",
+        "nl": "Het weer is zonnig vandaag"
+      }
+    },
+    {
+      "name": "device_action",
+      "type": "string",
+      "title": {
+        "en": "Device Action",
+        "nl": "Apparaat Actie"
+      },
+      "example": {
+        "en": "{\"type\":\"turn_on\",\"device\":\"lights\"}",
+        "nl": "{\"type\":\"turn_on\",\"device\":\"lights\"}"
+      }
+    }
   ]
 }
