@@ -83,15 +83,22 @@ module.exports = class MyBrandApp extends OAuth2App {
       
       this.log('Sending query to Google Assistant...');
       
+      // Add speaker to query if specified
+      let finalQuery = args.query;
+      if (args.speaker && args.speaker.name) {
+        finalQuery = `${args.query} op ${args.speaker.name}`;
+        this.log('Added speaker to query:', finalQuery);
+      }
+      
       // Call sendQuery on the driver and get the response
-      const result = await driver.sendQuery(device.googleOAuth2Client, args.query, args.new);
+      const result = await driver.sendQuery(device.googleOAuth2Client, finalQuery, args.new);
       
       this.log('Query sent successfully, response:', result.response);
       this.log('Device action:', result.deviceAction || 'None');
       
       // Update device capabilities with the results
       if (typeof device.updateQueryResults === 'function') {
-        await device.updateQueryResults(args.query, result.response, result.deviceAction || '');
+        await device.updateQueryResults(finalQuery, result.response, result.deviceAction || '');
       }
       
       // Return tokens for use in flow
@@ -99,6 +106,37 @@ module.exports = class MyBrandApp extends OAuth2App {
         response: result.response,
         device_action: result.deviceAction || ''
       };
+    });
+    
+    // Register autocomplete listener for speaker selection
+    queryAction.registerArgumentAutocompleteListener('speaker', async (query, args) => {
+      this.log('Autocomplete for speaker, query:', query);
+      
+      const driver = this.homey.drivers.getDriver('google-assistant-driver');
+      if (!driver || typeof driver.discoverCastDevices !== 'function') {
+        return [];
+      }
+      
+      try {
+        const devices = await driver.discoverCastDevices();
+        
+        // Filter based on search query
+        const results = devices
+          .filter(device => {
+            const name = device.name.toLowerCase();
+            const searchQuery = query.toLowerCase();
+            return name.includes(searchQuery);
+          })
+          .map(device => ({
+            name: device.name,
+            description: device.type || 'Cast Device'
+          }));
+        
+        return results;
+      } catch (err) {
+        this.error('Error discovering cast devices:', err);
+        return [];
+      }
     });
     
     stopAction.registerRunListener(async (args, state) => {

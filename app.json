@@ -41,8 +41,8 @@
           "nl": "Stuur een vraag naar Google Assistant"
         },
         "titleFormatted": {
-          "en": "Ask [[query]] to Google Assistant. New conversation: [[new]]",
-          "nl": "Vraag [[query]] naar Google Assistant. Nieuw gesprek: [[new]]"
+          "en": "Ask [[query]] to Google Assistant on [[speaker]]. New conversation: [[new]]",
+          "nl": "Vraag [[query]] naar Google Assistant op [[speaker]]. Nieuw gesprek: [[new]]"
         },
         "args": [
           {
@@ -51,6 +51,18 @@
             "placeholder": {
               "en": "query",
               "nl": "vraag"
+            }
+          },
+          {
+            "type": "autocomplete",
+            "name": "speaker",
+            "title": {
+              "en": "Speaker/Display",
+              "nl": "Speaker/Scherm"
+            },
+            "placeholder": {
+              "en": "Select speaker...",
+              "nl": "Selecteer speaker..."
             }
           },
           {

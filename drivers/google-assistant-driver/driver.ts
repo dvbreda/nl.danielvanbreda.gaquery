@@ -288,4 +288,52 @@ module.exports = class MyBrandDriver extends OAuth2Driver {
     return true;
   }
 
+  async discoverCastDevices() {
+    this.log('Discovering Cast devices...');
+    
+    return new Promise((resolve, reject) => {
+      const mdns = require('mdns-js');
+      const devices: any[] = [];
+      const timeout = 3000; // 3 seconds discovery timeout
+      
+      try {
+        const browser = mdns.createBrowser(mdns.tcp('googlecast'));
+        
+        browser.on('ready', () => {
+          this.log('mDNS browser ready, discovering...');
+          browser.discover();
+        });
+        
+        browser.on('update', (data: any) => {
+          this.log('Found Cast device:', data.fullname);
+          
+          // Extract device info
+          const deviceName = data.fullname?.split('.')[0] || 'Unknown Device';
+          const deviceType = data.txt?.find((t: string) => t.startsWith('md='))?.split('=')[1] || 'Cast Device';
+          
+          // Avoid duplicates
+          if (!devices.find(d => d.name === deviceName)) {
+            devices.push({
+              name: deviceName,
+              type: deviceType,
+              host: data.host,
+              port: data.port
+            });
+          }
+        });
+        
+        // Stop discovery after timeout
+        setTimeout(() => {
+          browser.stop();
+          this.log(`Discovery complete, found ${devices.length} devices`);
+          resolve(devices);
+        }, timeout);
+        
+      } catch (error) {
+        this.error('Error discovering cast devices:', error);
+        reject(error);
+      }
+    });
+  }
+
 }
